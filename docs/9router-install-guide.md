@@ -1,6 +1,6 @@
 # 9Router 本地安装与启动指南
 
-> 安装日期：2026-05-12
+> 安装日期：2026-05-12（最后更新：2026-05-16）
 > 项目地址：https://github.com/decolua/9router
 > 版本：v0.4.31
 
@@ -29,7 +29,20 @@ fnm ls              # 查看已安装的版本
 fnm use 24          # 切换到 Node 24
 ```
 
-> **注意**：`fnm use` 仅在当前 shell 会话中生效。在 Claude Code 中需要用 `eval "$(fnm env)" && fnm use 24` 确保环境生效。
+> **注意**：`fnm use` 仅在当前 shell 会话中生效。在 Claude Code 中推荐以下两种方式：
+
+> **方式一（推荐）** — 使用 `fnm exec` 在指定版本下执行命令：
+> ```bash
+> fnm exec --using 24 9router --tray --log
+> # 如果 9router 不在 PATH 中，使用完整路径：
+> fnm exec --using 24 node "$(dirname $(which 9router))/node_modules/9router/cli.js" --tray --log
+> ```
+> `fnm exec` 会在干净的环境中运行，不会受当前 shell 的 Node 版本影响。
+>
+> **方式二** — 在同一 shell 中初始化 fnm 环境并切换：
+> ```bash
+> eval "$(fnm env)" && fnm use 24 && 9router --tray --log
+> ```
 
 ### 3. 全局安装 9Router
 
@@ -39,7 +52,13 @@ npm install -g 9router
 
 ### 4. 启动 9Router
 
-**后台托盘模式（推荐）：**
+**后台托盘模式（推荐，无交互菜单）：**
+
+```bash
+9router --tray
+```
+
+**后台托盘模式（带日志输出，便于调试）：**
 
 ```bash
 9router --tray --log
@@ -50,6 +69,36 @@ npm install -g 9router
 ```bash
 9router
 ```
+
+启动后会显示交互菜单：
+
+```
+========================================
+  Choose Interface (v0.4.31)
+  🚀 Server: http://localhost:20128
+========================================
+
+> Update to v0.4.50 (current: v0.4.31)    ← 升级到最新版
+  Web UI (Open in Browser)                  ← 在浏览器打开控制面板
+  Terminal UI (Interactive CLI)             ← 终端交互界面
+  Hide to Tray (Background)                 ← 隐藏到系统托盘后台运行
+  Exit                                      ← 退出
+```
+
+选择 **Web UI** 会在浏览器打开 http://localhost:20128/dashboard。
+选择 **Hide to Tray** 会启动一个独立的后台进程并退出当前菜单。
+
+**在 Claude Code 中启动（绕过交互菜单）：**
+
+```bash
+# 方式 1：后台托盘模式（推荐）
+fnm exec --using 24 node "$(dirname $(which 9router))/node_modules/9router/cli.js" --tray
+
+# 方式 2：先切换版本再启动
+eval "$(fnm env)" && fnm use 24 && 9router --tray --log
+```
+
+> **注意**：使用 `fnm exec` 时 PATH 会被重置，全局安装的 `9router` 命令可能找不到，需要用 `node cli.js` 完整路径的方式运行。
 
 ### 5. 验证启动
 
@@ -144,16 +193,33 @@ Node 24 的 NODE_MODULE_VERSION 与 9Router 自带的 `better-sqlite3` 预编译
 
 **原因：** Claude Code 每个 Bash 命令在独立子 shell 中执行，`fnm use` 仅修改当前 shell 的环境变量（如 PATH），不会持久化到下一个命令的执行环境。
 
-**解决方式：** 将 `fnm env` 初始化与命令链在同一个 shell 中执行：
+**解决方式一 — 使用 `fnm exec`（推荐）：**
+
+```bash
+fnm exec --using 24 node "$(dirname $(which 9router))/node_modules/9router/cli.js" --tray
+```
+
+`fnm exec` 会在指定 Node 版本的干净环境中执行命令，不受当前 shell 状态影响。注意 `fnm exec` 下 PATH 不包含全局 npm bin 目录，需要用完整路径调用脚本。
+
+**解决方式二 — 同一 shell 中执行完整命令链：**
 
 ```bash
 eval "$(fnm env)" && fnm use 24 && node --version && npm install -g 9router
 ```
 
-或者使用更简单的做法：直接在后台启动命令前初始化 fnm 环境：
+或者直接在后台启动命令前初始化 fnm 环境：
 
 ```bash
 eval "$(fnm env)" && fnm use 24 && 9router --tray --log
+```
+
+**解决方式三 — 查看当前 fnm 路径（诊断用）：**
+
+```bash
+# 检查 9router 实际指向哪个 Node 版本
+which 9router        # → /c/Users/.../fnm_multishells/.../9router
+# 查看该 shell 脚本的内容
+cat $(which 9router) # → 会显示它调用的是哪个 node
 ```
 
 ### 问题 3：启动后 `g.snapshot is not a function` 错误
@@ -191,11 +257,33 @@ netstat -ano | findstr :20128
 taskkill //PID <查到的PID> //F
 ```
 
+### 问题 5：浏览器访问显示 Internal Server Error（HTTP 500）
+
+**现象：** 9Router 启动日志显示 Next.js 已 ready，但浏览器访问页面时返回 500 错误。
+
+**原因：** 数据库驱动未能加载。9Router 依赖 SQLite（`better-sqlite3` 或 `sql.js`）做本地数据存储，驱动加载失败后应用无法完成初始化。
+
+**排查方法：** 使用 `--log` 模式启动，查看服务端日志：
+
+```bash
+9router --tray --log
+```
+
+日志中会出现 `[DB] better-sqlite3 unavailable` 或 `[DB] sql.js unavailable` 等错误，具体原因可能是：
+- Node 版本不匹配（见问题 1）
+- 原生模块损坏或被误删
+- `sql-wasm.wasm` 文件缺失
+
+**解决：** 确认使用 Node.js 22+ 运行，并用 `fnm exec --using 24` 确保版本正确（参考问题 1 的最终方案）。
+
 ## 常用命令
 
 ```bash
 # 启动（后台托盘）
 9router --tray --log
+
+# 在 Claude Code 中用指定 Node 版本启动
+fnm exec --using 24 node "$(dirname $(which 9router))/node_modules/9router/cli.js" --tray
 
 # 指定端口启动
 9router -p 8080
