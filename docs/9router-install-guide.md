@@ -32,14 +32,17 @@ fnm use 24          # 切换到 Node 24
 > **注意**：`fnm use` 仅在当前 shell 会话中生效。在 Claude Code 中推荐以下两种方式：
 
 > **方式一（推荐）** — 使用 `fnm exec` 在指定版本下执行命令：
+> 
 > ```bash
 > fnm exec --using 24 9router --tray --log
 > # 如果 9router 不在 PATH 中，使用完整路径：
 > fnm exec --using 24 node "$(dirname $(which 9router))/node_modules/9router/cli.js" --tray --log
 > ```
+> 
 > `fnm exec` 会在干净的环境中运行，不会受当前 shell 的 Node 版本影响。
->
+> 
 > **方式二** — 在同一 shell 中初始化 fnm 环境并切换：
+> 
 > ```bash
 > eval "$(fnm env)" && fnm use 24 && 9router --tray --log
 > ```
@@ -113,11 +116,11 @@ curl -sL -o /dev/null -w "%{http_code}" http://localhost:20128
 
 ### 6. 访问地址
 
-| 用途 | 地址 |
-|------|------|
-| 控制面板 | http://localhost:20128/dashboard |
-| OpenAI 兼容 API | http://localhost:20128/v1 |
-| 默认登录密码 | `123456`（首次登录后请修改） |
+| 用途            | 地址                               |
+| ------------- | -------------------------------- |
+| 控制面板          | http://localhost:20128/dashboard |
+| OpenAI 兼容 API | http://localhost:20128/v1        |
+| 默认登录密码        | `123456`（首次登录后请修改）               |
 
 ## 踩坑记录
 
@@ -152,23 +155,29 @@ sql.js\dist/sql-wasm.wasm'
 **解决过程：**
 
 尝试 1 — 用 `npm rebuild better-sqlite3` 重新编译：
+
 ```
 cd <9router_app_dir>/app && npm rebuild better-sqlite3
 → rebuilt dependencies successfully
 ```
+
 结果：虽然提示编译成功，但 9Router 实际读取的是 `C:\Users\<user>\AppData\Roaming\9router\runtime\node_modules\`（运行时目录），而不是全局安装目录中的 `app/node_modules/`，所以问题依旧。
 
 尝试 2 — 在运行时目录 rebuild better-sqlite3：
+
 ```
 cd C:\Users\<user>\AppData\Roaming\9router\runtime\node_modules\better-sqlite3
 npm rebuild
 ```
+
 结果：失败，报错内容如下：
+
 ```
 npm ERR! gyp ERR! find Python
 npm ERR! gyp ERR! find Python You need to install the latest version of Python.
 npm ERR! gyp ERR! find Python Node-gyp should be able to find and use Python.
 ```
+
 `better-sqlite3` 是原生 C++ 模块，需要 `node-gyp` 编译，而 `node-gyp` 依赖 Python 3.x 和 C++ 编译工具链（Visual Studio Build Tools）。Windows 系统通常没有预装这些环境。
 
 **最终方案：** 用 `fnm` 切换到 Node.js 24
@@ -240,6 +249,7 @@ TypeError: g.snapshot is not a function
 ### 问题 4：端口占用导致启动冲突（可能遇到）
 
 **现象：**
+
 ```
 Error: listen EADDRINUSE :::20128
 ```
@@ -270,6 +280,7 @@ taskkill //PID <查到的PID> //F
 ```
 
 日志中会出现 `[DB] better-sqlite3 unavailable` 或 `[DB] sql.js unavailable` 等错误，具体原因可能是：
+
 - Node 版本不匹配（见问题 1）
 - 原生模块损坏或被误删
 - `sql-wasm.wasm` 文件缺失
