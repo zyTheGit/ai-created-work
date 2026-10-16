@@ -2,10 +2,10 @@
 
 > **分类**：engineering（工程类）｜**调用方式**：用户手动调用
 
-- **一句话定位**：扫描代码库寻找深化机会——生成可视化 HTML 报告，然后对用户选择的候选方案进行深度访谈。
+- **一句话定位**：扫描代码库寻找深化机会，生成可视化 HTML 报告，然后对用户选择的候选方案进行深度访谈。
 - **调用方式**：用户手动调用
 - **适用场景**：有空闲时间想改善代码库架构时；想发现浅模块并深化它们时；想提高代码的可测试性和 AI 可导航性时。
 - **核心指令**：
-  1. **探索**：先确定扫描范围（用户指定 > git log 热点分析），读取 `CONTEXT.md` 和相关 ADR，用 Explore sub-agent 有机地探索代码库，关注浅模块、理解成本高、接缝泄漏、测试困难的区域，对可疑浅模块执行删除测试。
-  2. **呈现 HTML 报告**：写入 OS 临时目录的自包含 HTML 文件（Tailwind + Mermaid），每个候选方案包含文件、问题、解决方案、收益（以 locality 和 leverage 表述）、前后对比图、推荐强度（Strong / Worth exploring / Speculative）。末尾给出首选推荐。如有 ADR 冲突须明确标注。报告完成后询问用户选择。
-  3. **访谈循环**：用户选定后运行 `/grilling` 讨论决策树，同时用 `/domain-modeling` 保持领域模型更新（新术语写入 `CONTEXT.md`、重要拒绝理由提议 ADR）。使用 `/codebase-design` 的精确词汇，不得漂移为 component/service/API/boundary。
+  1. **探索（先做 YAGNI 范围过滤）**：深化一个模块的回报在于让**未来**对它的改动更容易，所以要给"最近改过的部分"额外加权。用户指定了方向（模块、子系统、痛点）就用用户的；否则回读约 **20 条** commit message 找出持续出现的**热点路径**，让它们把注意力先拉过去（没人碰的代码里的深化机会是永远兑现不了的重构）；改动过于分散、找不到明显热点时再扩大范围。先读 `GLOSSARY.md` 和该区域的 ADR，再派 sub-agent（harness 中立）有机探索，关注浅模块、理解成本高、纯函数抽取过度导致真实 bug 藏在调用方式里（无 locality）、跨接缝泄漏、难以通过现有接口测试的区域；对可疑浅模块执行删除测试（删掉它是让复杂度集中了，还是只是搬家）。
+  2. **呈现 HTML 报告**：写入 OS 临时目录的自包含 HTML 文件（按 `$TMPDIR` → `/tmp` / `%TEMP%` 解析，文件名 `architecture-review-<timestamp>.html`），打开并告知绝对路径。布局用 CDN 版 Tailwind，图用 CDN 版 Mermaid（关系是图状的才用，编辑式可视化交给手写 div/SVG）。每个候选方案渲染一张卡片：涉及文件、问题、方案、以 locality 和 leverage 表述的收益、手绘前后对比图、推荐强度徽章（Strong / Worth exploring / Speculative），末尾给**首选推荐**。用 `GLOSSARY.md` 的领域词汇加 `/codebase-design` 的建筑词汇（不得漂移成 component / service / API / boundary）。与已有 ADR 冲突的候选，只有在摩擦真实到值得重开 ADR 时才列出，并在卡片上明确标注。报告写完**先不提议接口**，只问"你想深入哪一个"。
+  3. **访谈循环**：用户选定后调用 Skill 工具的 `"grilling"` 走决策树（约束、依赖、深化后模块的形状、接缝后放什么、哪些测试存活），同时调用 `"domain-modeling"` 保持领域模型最新（新术语写入 `GLOSSARY.md`、模糊术语当场打磨、用户以站得住的理由否掉候选时提议 ADR）；想探索替代接口就再调 `"codebase-design"` 的设计两遍并行 sub-agent 模式。

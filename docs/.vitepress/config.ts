@@ -96,7 +96,19 @@ export default withMermaid(
             base: '/mattpocock-skills/',
             collapsed: true,
             items: [
+              {
+                text: '推荐工作流',
+                collapsed: false,
+                items: [
+                  { text: '总览与选择', link: '推荐工作流' },
+                  { text: '日常开发', link: '工作流-日常开发' },
+                  { text: 'Bug 修复', link: '工作流-Bug修复' },
+                  { text: '大型规划', link: '工作流-大型规划' },
+                  { text: '阶段边界', link: '工作流-阶段边界' }
+                ]
+              },
               { text: '索引', link: 'README' },
+              { text: '上游版本差异', link: '上游版本差异' },
               { text: '中文提示词大全', link: 'mattpocock-skills-中文提示词大全' },
               { text: '精简版', link: 'mattpocock-skills-精简版' },
               {
@@ -110,16 +122,19 @@ export default withMermaid(
                   { text: 'domain-modeling', link: 'domain-modeling' },
                   { text: 'grill-with-docs', link: 'grill-with-docs' },
                   { text: 'implement', link: 'implement' },
+                  { text: 'implement-spec', link: 'implement-spec' },
                   { text: 'improve-codebase-architecture', link: 'improve-codebase-architecture' },
+                  { text: 'pr', link: 'pr' },
                   { text: 'prototype', link: 'prototype' },
                   { text: 'research', link: 'research' },
-                  { text: 'resolving-merge-conflicts', link: 'resolving-merge-conflicts' },
+                  { text: 'retro', link: 'retro' },
                   { text: 'setup-matt-pocock-skills', link: 'setup-matt-pocock-skills' },
                   { text: 'tdd', link: 'tdd' },
                   { text: 'to-spec', link: 'to-spec' },
                   { text: 'to-tickets', link: 'to-tickets' },
                   { text: 'triage', link: 'triage' },
-                  { text: 'wayfinder', link: 'wayfinder' }
+                  { text: 'wayfinder', link: 'wayfinder' },
+                  { text: 'wizard', link: 'wizard' }
                 ]
               },
               {
@@ -130,7 +145,9 @@ export default withMermaid(
                   { text: 'grilling', link: 'grilling' },
                   { text: 'handoff', link: 'handoff' },
                   { text: 'teach', link: 'teach' },
-                  { text: 'writing-great-skills', link: 'writing-great-skills' }
+                  { text: 'to-questionnaire', link: 'to-questionnaire' },
+                  { text: 'wait-what', link: 'wait-what' },
+                  { text: 'writing-for-agents', link: 'writing-for-agents' }
                 ]
               },
               {
@@ -144,36 +161,16 @@ export default withMermaid(
                 ]
               },
               {
-                text: '个人专用（Personal）',
-                collapsed: true,
-                items: [
-                  { text: 'edit-article', link: 'edit-article' },
-                  { text: 'obsidian-vault', link: 'obsidian-vault' }
-                ]
-              },
-              {
                 text: '开发中（In Progress）',
                 collapsed: true,
                 items: [
-                  { text: 'batch-grill-me', link: 'batch-grill-me' },
+                  { text: 'chief-of-staff', link: 'chief-of-staff' },
                   { text: 'claude-handoff', link: 'claude-handoff' },
                   { text: 'loop-me', link: 'loop-me' },
                   { text: 'setup-ts-deep-modules', link: 'setup-ts-deep-modules' },
-                  { text: 'to-questionnaire', link: 'to-questionnaire' },
-                  { text: 'wizard', link: 'wizard' },
                   { text: 'writing-beats', link: 'writing-beats' },
                   { text: 'writing-fragments', link: 'writing-fragments' },
                   { text: 'writing-shape', link: 'writing-shape' }
-                ]
-              },
-              {
-                text: '已废弃（Deprecated）',
-                collapsed: true,
-                items: [
-                  { text: 'design-an-interface', link: 'design-an-interface' },
-                  { text: 'qa', link: 'qa' },
-                  { text: 'request-refactor-plan', link: 'request-refactor-plan' },
-                  { text: 'ubiquitous-language', link: 'ubiquitous-language' }
                 ]
               }
             ]
