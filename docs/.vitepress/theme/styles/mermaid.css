@@ -1,0 +1,14 @@
+/**
+ * VitePress 默认主题的 `.vp-doc p { line-height: 28px }` 会命中 Mermaid 用
+ * foreignObject 渲染的节点标签，而 Mermaid 按自己设定的 24px 行高计算容器高度，
+ * 于是每行文字底部超出 foreignObject（overflow 默认 hidden）被裁掉一半。
+ * 这里把行高还给 Mermaid 的 1.5，并允许溢出，避免中文节点文字被遮挡。
+ */
+.vp-doc .mermaid foreignObject p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.vp-doc .mermaid foreignObject {
+  overflow: visible;
+}
