@@ -244,7 +244,10 @@ export default withMermaid(
 
     // ===== Mermaid 配置（vitepress-plugin-mermaid）=====
     mermaid: {
-      theme: 'default'
+      theme: 'default',
+      // 默认 200px 的折行宽度小于 /improve-codebase-architecture 这类长命令名，
+      // 标签会被压缩到 200px 后撑破节点边框，放宽到 320px 让长标签按实际宽度计算节点尺寸
+      flowchart: { wrappingWidth: 320 }
     }
   })
 )
