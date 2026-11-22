@@ -38,7 +38,8 @@ const PROD_ORDER = ['grill-me', 'grilling', 'handoff', 'teach',
 const MISC_ORDER = ['git-guardrails-claude-code', 'migrate-to-shoehorn',
   'scaffold-exercises', 'setup-pre-commit'];
 const INPROG_ORDER = ['chief-of-staff', 'claude-handoff', 'loop-me',
-  'setup-ts-deep-modules', 'writing-beats', 'writing-fragments', 'writing-shape'];
+  'setup-ts-deep-modules', 'writing-beats', 'writing-fragments', 'writing-shape',
+  'software-factory'];
 
 function pick(map, order, label) {
   const out = [];
@@ -60,9 +61,9 @@ const inprogSections = pick(inprog, INPROG_ORDER, 'in-progress');
 const doc = `# Matt Pocock Skills 中文提示词大全
 
 > **来源**：[mattpocock/skills](https://github.com/mattpocock/skills) 仓库的 [\`skills/\`](https://github.com/mattpocock/skills/tree/main/skills) 目录
-> **生成日期**：2026-07-22 ｜ **同步更新**：2026-10-16
-> **同步基线**：上游 \`ed37663\`（2026-07-21）→ \`49dd158\`（2026-10-09，v1.3.1 之后尚未发版）
-> **统计**：共 **38 个 skill**，分布于 4 个分类文件夹（另 2 个分类已空或已移除）
+> **生成日期**：2026-07-22 ｜ **同步更新**：2026-11-22
+> **同步基线**：上游 \`ed37663\`（2026-07-21）→ \`abeeaf9\`（2026-11-19，v1.3.2 之后）
+> **统计**：共 **39 个 skill**，分布于 4 个分类文件夹（另 2 个分类已空或已移除）
 > **逐版本差异**：见 [上游版本差异](./上游版本差异.md)
 
 ## 分类说明
@@ -72,7 +73,7 @@ const doc = `# Matt Pocock Skills 中文提示词大全
 | \`engineering/\` | 20 | 日常代码工作（**promoted**，随插件发布） |
 | \`productivity/\` | 7 | 日常非代码工作流工具（**promoted**，随插件发布） |
 | \`misc/\` | 4 | 保留但很少使用，不对外推荐 |
-| \`in-progress/\` | 7 | beta 频道：有意发布、安装即用，可经 skills.sh 单独安装 |
+| \`in-progress/\` | 8 | beta 频道：有意发布、安装即用，可经 skills.sh 单独安装 |
 | \`deprecated/\` | 0 | 桶保留但已清空（v1.2.0 起 4 个技能全部移除） |
 | \`personal/\` | — | **桶已整体移除**（v1.2.0） |
 
@@ -104,7 +105,7 @@ ${miscSections}
 
 ---
 
-## 四、in-progress（开发中草稿，7 个）
+## 四、in-progress（开发中草稿，8 个）
 
 ${inprogSections}
 
@@ -158,17 +159,18 @@ ${inprogSections}
 | \`scaffold-exercises\` | 自动 | 生成符合 lint 规范的课程练习目录结构 |
 | \`setup-pre-commit\` | 自动 | 配置 Husky + lint-staged + typecheck + test 提交门禁 |
 
-### in-progress（开发中草稿，7 个）
+### in-progress（开发中草稿，8 个）
 
 | Skill | 调用方式 | 一句话作用 |
 |---|---|---|
-| \`chief-of-staff\` | 手动 | 实验性：单会话内协调 subagent 推进长期目标 |
+| \`chief-of-staff\` | 手动 | 实验性：单会话内协调 subagent 推进长期目标，记忆落在 wiki |
 | \`claude-handoff\` | 手动 | 生成交接摘要并用 \`claude --bg\` 启动后台接手 agent |
 | \`loop-me\` | 手动 | 把重复模式访谈成可实施的工作流规格 |
 | \`setup-ts-deep-modules\` | 手动 | 用 dependency-cruiser 把 TS 包封装为深模块边界 |
 | \`writing-beats\` | 手动 | 以"接地"约束逐拍组装文章叙事路径 |
 | \`writing-fragments\` | 手动 | 写作探索期：访谈挖掘原始片段，不施加结构 |
 | \`writing-shape\` | 手动 | 把素材逐段塑造成有论证结构的完整文章 |
+| \`software-factory\` | 手动 | 软件工厂设计词汇：任务、run、runner 与各项服务 |
 
 ### 已移除的技能（不再收录）
 
@@ -195,7 +197,8 @@ ${inprogSections}
 | v1.2.3 | 2026-08-06 | \`diagnosing-bugs\` 脱敏章节、三个技能去 Claude Code 专属工具名、\`wizard\` 进度改按阶段计 |
 | v1.3.0 | 2026-09-29 | 新增 \`implement-spec\`/\`pr\`/\`retro\`，删除 \`resolving-merge-conflicts\`，**\`CONTEXT.md\`→\`GLOSSARY.md\` 全局更名（11 个技能）**，跨技能调用统一 Skill tool 写法，全仓库清除 em-dash |
 | v1.3.1 | 2026-10-04 | \`ask-matt\` 把 bug 后反思路由改指 \`/retro\`（仅此一条） |
-| HEAD \`49dd158\` | 2026-10-09 | 未发版：11 处技能级修正 + 实验技能 \`chief-of-staff\` + README 改自助更新安装 |
+| v1.3.2 | 2026-10-29 | **subagent 全新上下文窗口约定（8 个技能）**、\`chief-of-staff\` wiki 记忆、GitHub/GitLab tracker 模板修正、\`handoff\` 明确临时目录、\`implement\` 改用 Skill tool 调用 \`tdd\`/\`code-review\` |
+| HEAD \`abeeaf9\` | 2026-11-19 | 未发版：新增 \`software-factory\`；\`chief-of-staff\` 共享 wiki + procedures；\`implement-spec\` 每工单全新 implementer |
 
 > 完整逐版本差异（含每条 PR、每个技能的具体改动、对使用者的实际影响）见 [上游版本差异](./上游版本差异.md)。
 `;

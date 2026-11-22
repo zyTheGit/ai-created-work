@@ -1,7 +1,7 @@
 # Matt Pocock Skills：给 AI 代理的工程技能体系
 
 > 仓库：github.com/mattpocock/skills ｜ 作者：Matt Pocock ｜ 许可证：MIT
-> 本文对应上游 `v1.3.1` 之后（HEAD `49dd158`，2026-10-09）。逐版本差异见 [上游版本差异](./上游版本差异.md)。
+> 本文对应上游 `v1.3.2` 之后（HEAD `abeeaf9`，2026-11-19）。逐版本差异见 [上游版本差异](./上游版本差异.md)。
 
 ---
 
@@ -23,7 +23,9 @@ AI 编码代理有**四大常见失败模式**，这套技能逐一解决：
 
 > 规则：**用户调用技能不能调用另一个用户调用技能**，只能调用模型调用技能。跨技能调用统一写成 `Call the Skill tool with "X"`（散文式 "run the `/X` skill" 不可靠，这是 `grill-with-docs` 被报告最多的问题背后的已知粗糙边缘）。若目标技能是用户调用类，源码会让 agent **转告人类去运行 `/X`**。
 
-技能还按**主题桶**分五类：`engineering`（20）、`productivity`（7）、`misc`（4）、`in-progress`（7，beta 频道，有意发布、可单独安装）。`deprecated` 桶已清空，`personal` 桶已整体移除。
+> 派发 subagent 的技能（`implement-spec`、`code-review`、`codebase-design`、`improve-codebase-architecture`、`wayfinder`、`research`、`grilling`、`chief-of-staff`）从 v1.3.2 起都要求**以全新上下文窗口启动每个 subagent**，而不是 fork 当前对话——fork 会把 subagent 本应拥有的干净上下文丢掉（Codex 等 harness 默认这么干）。
+
+技能还按**主题桶**分五类：`engineering`（20）、`productivity`（7）、`misc`（4）、`in-progress`（8，beta 频道，有意发布、可单独安装）。`deprecated` 桶已清空，`personal` 桶已整体移除。
 
 ## 三、安装
 
@@ -89,17 +91,18 @@ npx skills@latest add mattpocock/skills
 | grilling | 模型 | 拷问原语，按**轮次问前沿** |
 | writing-for-agents | 模型 | 写给 agent 看的文档的写作参考手册 |
 
-### 🧪 In-progress 技能（7 个，beta 频道）
+### 🧪 In-progress 技能（8 个，beta 频道）
 
 | 技能 | 调用 | 一句话说明 |
 |------|------|-----------|
-| chief-of-staff | 用户 | 实验性：单会话内协调 subagent 推进长期目标 |
+| chief-of-staff | 用户 | 实验性：单会话内协调 subagent 推进长期目标，记忆落在 wiki |
 | claude-handoff | 用户 | 交接摘要 + `claude --bg` 启动后台接手 agent |
 | loop-me | 用户 | 把重复模式访谈成可实施的工作流规格 |
 | setup-ts-deep-modules | 用户 | 用 dependency-cruiser 把 TS 包封装为深模块边界 |
 | writing-beats | 用户 | 以"接地"约束逐拍组装文章叙事路径 |
 | writing-fragments | 用户 | 写作探索期：挖掘原始片段，不施加结构 |
 | writing-shape | 用户 | 把素材逐段塑造成有论证结构的完整文章 |
+| software-factory | 用户 | 软件工厂设计词汇：任务、run、runner、编排器与各项服务 |
 
 ## 五、推荐工作流
 

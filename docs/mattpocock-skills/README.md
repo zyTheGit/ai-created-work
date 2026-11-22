@@ -1,7 +1,7 @@
 # Matt Pocock Skills 中文文档索引
 
-> 本文件夹收录 [mattpocock-skills 中文提示词大全](./mattpocock-skills-中文提示词大全.md) 中全部 **38 个 skill** 的独立文档，每个 skill 一个文件。
-> 上游同步基线：`49dd158`（v1.3.1 之后，2026-10-09）｜同步日期：2026-10-16
+> 本文件夹收录 [mattpocock-skills 中文提示词大全](./mattpocock-skills-中文提示词大全.md) 中全部 **39 个 skill** 的独立文档，每个 skill 一个文件。
+> 上游同步基线：`abeeaf9`（v1.3.2 之后，2026-11-19）｜同步日期：2026-11-22
 > 各版本差异详见 [上游版本差异](./上游版本差异.md)。
 
 ## 推荐工作流（从这里开始）
@@ -62,17 +62,18 @@
 | [scaffold-exercises](./scaffold-exercises.md) | 自动 | 生成符合 lint 规范的课程练习目录结构 |
 | [setup-pre-commit](./setup-pre-commit.md) | 自动 | 配置 Husky + lint-staged + typecheck + test 提交门禁 |
 
-## in-progress（开发中草稿，7 个）
+## in-progress（开发中草稿，8 个）
 
 | Skill | 调用方式 | 一句话作用 |
 |---|---|---|
-| [chief-of-staff](./chief-of-staff.md) | 手动 | 在单会话内协调 subagent 推进长期目标 |
+| [chief-of-staff](./chief-of-staff.md) | 手动 | 在单会话内协调 subagent 推进长期目标，记忆落在 wiki |
 | [claude-handoff](./claude-handoff.md) | 手动 | 生成交接摘要并用 `claude --bg` 启动后台接手 agent |
 | [loop-me](./loop-me.md) | 手动 | 把重复模式访谈成可实施的工作流规格 |
 | [setup-ts-deep-modules](./setup-ts-deep-modules.md) | 手动 | 用 dependency-cruiser 把 TS 包封装为深模块边界 |
 | [writing-beats](./writing-beats.md) | 手动 | 以"接地"约束逐拍组装文章叙事路径 |
 | [writing-fragments](./writing-fragments.md) | 手动 | 写作探索期：访谈挖掘原始片段，不施加结构 |
 | [writing-shape](./writing-shape.md) | 手动 | 把素材逐段塑造成有论证结构的完整文章 |
+| [software-factory](./software-factory.md) | 手动 | 设计软件工厂的共享词汇：任务、run、runner 与各项服务 |
 
 ## 已从上游移除的分类
 
@@ -99,6 +100,7 @@
 | v1.2.3 | 2026-08-06 | 已同步：脱敏章节、去工具专名、进度改按阶段计 |
 | v1.3.0 | 2026-09-29 | 已同步：新增 3 个工程技能、`CONTEXT.md`→`GLOSSARY.md` |
 | v1.3.1 | 2026-10-04 | 已同步：`ask-matt` 把 bug 后反思路由到 `/retro` |
-| HEAD（`49dd158`） | 2026-10-09 | 已同步：尚未发版的多处修正 + 实验技能 `chief-of-staff` |
+| v1.3.2 | 2026-10-29 | 已同步：subagent 全新上下文窗口约定、`chief-of-staff` wiki 记忆、tracker 模板修正 |
+| HEAD（`abeeaf9`） | 2026-11-19 | 已同步：新增 `software-factory`；`chief-of-staff` 共享 wiki 与 procedures；`implement-spec` 每工单全新 implementer |
 
 详细差异见 [上游版本差异](./上游版本差异.md)。

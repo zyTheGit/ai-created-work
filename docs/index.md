@@ -32,7 +32,7 @@ features:
     linkText: 浏览
   - icon: 🧩
     title: Matt Pocock Skills
-    details: 41 个 Claude Code 工程技能的中文文档，涵盖代码审查、TDD、领域建模、调试等核心实践。
+    details: 39 个 Claude Code 工程技能的中文文档，涵盖代码审查、TDD、领域建模、调试等核心实践。
     link: /mattpocock-skills/README
     linkText: 浏览
 ---

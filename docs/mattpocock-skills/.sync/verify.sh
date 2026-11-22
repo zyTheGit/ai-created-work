@@ -78,6 +78,8 @@ for f in "$DOC"/*.md; do
   base=$(basename "$f" .md)
   case "$base" in
     README|mattpocock-skills-中文提示词大全|mattpocock-skills-精简版|上游版本差异) continue ;;
+    # setup 技能的职责之一就是识别并迁移遗留 CONTEXT.md，允许其合法提及
+    setup-matt-pocock-skills) continue ;;
   esac
   if grep -qn 'CONTEXT\.md\|CONTEXT-MAP\.md' "$f"; then
     echo "  [陈旧术语] $base.md 仍含 CONTEXT.md/CONTEXT-MAP.md（应为 GLOSSARY.md）"

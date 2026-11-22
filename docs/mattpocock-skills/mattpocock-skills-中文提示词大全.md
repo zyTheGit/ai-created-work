@@ -1,9 +1,9 @@
 # Matt Pocock Skills 中文提示词大全
 
 > **来源**：[mattpocock/skills](https://github.com/mattpocock/skills) 仓库的 [`skills/`](https://github.com/mattpocock/skills/tree/main/skills) 目录
-> **生成日期**：2026-07-22 ｜ **同步更新**：2026-10-16
-> **同步基线**：上游 `ed37663`（2026-07-21）→ `49dd158`（2026-10-09，v1.3.1 之后尚未发版）
-> **统计**：共 **38 个 skill**，分布于 4 个分类文件夹（另 2 个分类已空或已移除）
+> **生成日期**：2026-07-22 ｜ **同步更新**：2026-11-22
+> **同步基线**：上游 `ed37663`（2026-07-21）→ `abeeaf9`（2026-11-19，v1.3.2 之后）
+> **统计**：共 **39 个 skill**，分布于 4 个分类文件夹（另 2 个分类已空或已移除）
 > **逐版本差异**：见 [上游版本差异](./上游版本差异.md)
 
 ## 分类说明
@@ -13,7 +13,7 @@
 | `engineering/` | 20 | 日常代码工作（**promoted**，随插件发布） |
 | `productivity/` | 7 | 日常非代码工作流工具（**promoted**，随插件发布） |
 | `misc/` | 4 | 保留但很少使用，不对外推荐 |
-| `in-progress/` | 7 | beta 频道：有意发布、安装即用，可经 skills.sh 单独安装 |
+| `in-progress/` | 8 | beta 频道：有意发布、安装即用，可经 skills.sh 单独安装 |
 | `deprecated/` | 0 | 桶保留但已清空（v1.2.0 起 4 个技能全部移除） |
 | `personal/` | — | **桶已整体移除**（v1.2.0） |
 
@@ -54,7 +54,7 @@
   1. **锚定基准点**：确认用户指定的 commit/branch/tag，用 `git diff <fixed-point>...HEAD`（三点 diff，对比 merge-base）获取变更，并记下 `git log <fixed-point>..HEAD --oneline` 的提交列表；基准点无法解析或 diff 为空时**在此处失败**，不要带进两个并行 sub-agent。
   2. **定位 Spec 来源**：按优先级搜索，commit message 中的 issue 引用（`#123`、`Closes #45`、GitLab `!67`）> 用户作为参数传入的路径 > `docs/`、`specs/`、`.scratch/` 下与分支或功能匹配的 spec 文件 > 询问用户。若用户说没有 spec，Spec 子 agent 将跳过并报告 "no spec available"。
   3. **定位 Standards 来源**：**搜索仓库**中每一个记录"代码该如何写"的文件，`CODING_STANDARDS.md` 或 `CONTRIBUTING.md` 存在时必须在列。此外 Standards 轴始终携带一套固定的 Fowler 代码异味基线（_Refactoring_ 第 3 章，12 种），两条约束：仓库文档标准永远覆盖基线；每条异味都是带标签的启发式判断（如 "possible Feature Envy"），绝不是硬性违规；工具已强制的一律跳过。
-  4. **并行派发两个 sub-agent**：以 harness 中立的方式把两次调用**一起发出、放到前台**，再汇总它们返回的报告。Standards agent 需拿到 diff 命令、提交列表、第 3 步找到的规范文件清单，**以及完整粘贴进来的异味基线**（它没有别的途径获取），外加"区分硬性违规与判断性异味、跳过工具已强制的、400 字以内"的指令；Spec agent 需拿到 spec 内容，报告缺失或部分实现的需求、范围蔓延、以及实现看起来不对的地方，每条发现引用 spec 原文。spec 缺失则跳过 Spec agent 并在最终报告中注明。
+  4. **并行派发两个 sub-agent**：以 harness 中立的方式把两次调用**一起发出、放到前台**（每个 sub-agent 都以**全新上下文窗口**启动，不要 fork 当前对话），再汇总它们返回的报告。Standards agent 需拿到 diff 命令、提交列表、第 3 步找到的规范文件清单，**以及完整粘贴进来的异味基线**（它没有别的途径获取），外加"区分硬性违规与判断性异味、跳过工具已强制的、400 字以内"的指令；Spec agent 需拿到 spec 内容，报告缺失或部分实现的需求、范围蔓延、以及实现看起来不对的地方，每条发现引用 spec 原文。spec 缺失则跳过 Spec agent 并在最终报告中注明。
   5. **汇总**：分 `## Standards` 和 `## Spec` 两节原样呈现两个报告，**不合并不重排**（两轴是故意分开的：符合全部规范却实现了错的东西 = Standards 过 Spec 挂；照 issue 做了却破坏项目约定 = 反之），末尾给出每轴发现总数与该轴内最严重的问题，不跨轴选冠军。
   6. **前置条件**：issue tracker 本应已提供；若没有，**告知用户去运行 `/setup-matt-pocock-skills`**，不要试图用 Skill tool 调它（用户手动类技能）。
 
@@ -72,7 +72,7 @@
   - **深度 vs 浅度**：深模块 = 小接口 + 大实现；浅模块 = 大接口 + 薄实现（应避免）。设计时追问：能否减少方法数？能否简化参数？能否隐藏更多复杂度？
   - **核心原则**：深度是接口的属性而非实现的属性（模块内部可以有仅供自己测试用的**内部接缝**）；删除测试（删掉模块后复杂度是集中了，还是只是搬家）；接口即测试面（想测到接口之外，说明模块形状不对）；一个 adapter 意味假设性接缝，两个才是真实接缝，没有东西真的在变就别造接缝。
   - **可测试性设计**：接受依赖而非创建依赖；返回结果而非产生副作用；小接口面积。
-  - **设计两遍（Design It Twice，源自 Ousterhout，原 `design-an-interface` 技能已并入此处）**：为已选定的深化候选项探索替代接口时，先写出面向用户的问题空间说明（新接口必须满足的约束、依赖分类、一段仅用于把约束讲实的示意代码），展示给用户后立即并行 spawn **3 个以上** sub-agent，每个以**不同的设计约束**产出一套**截然不同**的接口（Agent 1 最小化接口只留 1-3 个入口点、Agent 2 最大化灵活性、Agent 3 为最常见调用方优化、必要时 Agent 4 用 ports & adapters 处理跨接缝依赖）；每个 agent 输出接口、调用示例、接缝后藏了什么、依赖策略与 adapter、以及取舍。sub-agent 派发保持 harness 中立。逐个展示后按**深度**、**局部性**、**接缝位置**三维对比，并给出有主见的推荐，可以提议混合方案。
+  - **设计两遍（Design It Twice，源自 Ousterhout，原 `design-an-interface` 技能已并入此处）**：为已选定的深化候选项探索替代接口时，先写出面向用户的问题空间说明（新接口必须满足的约束、依赖分类、一段仅用于把约束讲实的示意代码），展示给用户后立即并行 spawn **3 个以上** sub-agent（每个都以**全新上下文窗口**启动），每个以**不同的设计约束**产出一套**截然不同**的接口（Agent 1 最小化接口只留 1-3 个入口点、Agent 2 最大化灵活性、Agent 3 为最常见调用方优化、必要时 Agent 4 用 ports & adapters 处理跨接缝依赖）；每个 agent 输出接口、调用示例、接缝后藏了什么、依赖策略与 adapter、以及取舍。sub-agent 派发保持 harness 中立。逐个展示后按**深度**、**局部性**、**接缝位置**三维对比，并给出有主见的推荐，可以提议混合方案。
   - **被拒绝的框定**：深度不是"实现行数 / 接口行数"之比（那会奖励给实现注水）；interface 不等于 TS `interface` 关键字或类的公开方法；不用 boundary（与 DDD 的 bounded context 冲突）。
   - **深入**：给定依赖关系去深化一个模块簇见 `DEEPENING.md`（依赖分类、接缝纪律、replace-don't-layer 测试）。
 
@@ -155,11 +155,11 @@
 - **适用场景**：`/to-spec` + `/to-tickets` 的产物已在手，希望一次性把整份 spec 建完，而不是逐个工单 `/implement`；在 `ask-matt` 主流程中，它是逐工单 `/implement`（每个之间 `/clear` 上下文）的**并行替代路线**，适合"想编排这次构建而不想自己开每一张工单"的时候。
 - **核心指令**：
   1. **任务图与前沿**：工单不是步骤清单，而是带阻塞关系的**任务图**，因此总有一批就绪的**前沿**工单可被抓取。目标是整个 spec 落在**一条集成分支**上，每个工单都按 issue tracker 关闭工作的方式解决。
-  2. **稀疏通信 + 上下文指针**：与 subagent 的往来保持稀疏，主要靠**上下文指针**传递（spec、工单、研究笔记、此前的 commit）；指针已能提供的信息不要重复传递。
-  3. **步骤**：读 spec 和工单以理解任务图；（可选）先用 **exploration subagent** 做工单所需的探索，并把 markdown 笔记存到仓库之外、所有未来 subagent 都能访问的目录，让 implementer 专心实现而非探索；创建集成分支；用 **implementer subagent** 实施每张工单，各自在自己的 worktree 和自己的分支上，尽可能后台并行以求最大并发。
+  2. **稀疏通信 + 上下文指针**：与 subagent 的往来保持稀疏，主要靠**上下文指针**传递（spec、工单、研究笔记、此前的 commit）；指针已能提供的信息不要重复传递。**每个 subagent 都用全新的上下文窗口启动**，不要 fork 当前对话。
+  3. **步骤**：读 spec 和工单以理解任务图；（可选）先用 **exploration subagent** 做工单所需的探索，并把 markdown 笔记存到仓库之外、所有未来 subagent 都能访问的目录，让 implementer 专心实现而非探索；创建集成分支；**每张工单使用一个全新的 implementer subagent**，各自在自己的 worktree 和自己的分支上，尽可能后台并行以求最大并发。
   4. **每个 implementer**：开工前确认自己的 worktree 基于集成分支（不是就重置过去）；调用 Skill 工具的 `tdd` 来构建该工单；报告完成前把集成分支的尖端合并进自己的分支，使每次合并都是快进。
   5. **合并推进**：implementer 完成后，用 **merger subagent** 把它的工作合并到集成分支；若这改变了可认领工单的**前沿**，就再拉起更多 implementer 去抢新工单，以维持最大并发。
-  6. **收尾**：所有工单完成后，在集成分支上调用 Skill 工具的 `code-review`，审查提出的全部问题交给**单个** implementer subagent 一次修完；若存在 draft PR 则标记为 ready for review，否则按 tracker 的方式逐个解决工单并汇报集成分支；最后清理所有 implementer worktree。
+  6. **收尾**：所有工单完成后，在集成分支上调用 Skill 工具的 `code-review`，审查提出的全部问题交给**单个全新的** implementer subagent 一次修完（不复用此前的 implementer）；若存在 draft PR 则标记为 ready for review，否则按 tracker 的方式逐个解决工单并汇报集成分支；最后清理所有 implementer worktree。
   7. **关于 PR**：目标是集成分支而不是 PR。只有当 issue tracker 通过 PR 关闭工作、或用户明确要求时才开 PR，且必须在第一次合并之后（没有领先 main 的提交的分支开不了 PR），并标记它关闭该 spec 与工单；没有 PR 时，工单按 tracker 关闭工作的方式解决。
   8. **前置条件**：issue tracker 应已提供；没提供就**告知用户运行 `/setup-matt-pocock-skills`**（该技能由人类手动执行），而不是默默默认使用 `gh`。
 
@@ -173,7 +173,7 @@
 - **调用方式**：用户手动调用
 - **适用场景**：有空闲时间想改善代码库架构时；想发现浅模块并深化它们时；想提高代码的可测试性和 AI 可导航性时。
 - **核心指令**：
-  1. **探索（先做 YAGNI 范围过滤）**：深化一个模块的回报在于让**未来**对它的改动更容易，所以要给"最近改过的部分"额外加权。用户指定了方向（模块、子系统、痛点）就用用户的；否则回读约 **20 条** commit message 找出持续出现的**热点路径**，让它们把注意力先拉过去（没人碰的代码里的深化机会是永远兑现不了的重构）；改动过于分散、找不到明显热点时再扩大范围。先读 `GLOSSARY.md` 和该区域的 ADR，再派 sub-agent（harness 中立）有机探索，关注浅模块、理解成本高、纯函数抽取过度导致真实 bug 藏在调用方式里（无 locality）、跨接缝泄漏、难以通过现有接口测试的区域；对可疑浅模块执行删除测试（删掉它是让复杂度集中了，还是只是搬家）。
+  1. **探索（先做 YAGNI 范围过滤）**：深化一个模块的回报在于让**未来**对它的改动更容易，所以要给"最近改过的部分"额外加权。用户指定了方向（模块、子系统、痛点）就用用户的；否则回读约 **20 条** commit message 找出持续出现的**热点路径**，让它们把注意力先拉过去（没人碰的代码里的深化机会是永远兑现不了的重构）；改动过于分散、找不到明显热点时再扩大范围。先读 `GLOSSARY.md` 和该区域的 ADR，再派 sub-agent（**全新上下文窗口**，harness 中立）有机探索，关注浅模块、理解成本高、纯函数抽取过度导致真实 bug 藏在调用方式里（无 locality）、跨接缝泄漏、难以通过现有接口测试的区域；对可疑浅模块执行删除测试（删掉它是让复杂度集中了，还是只是搬家）。
   2. **呈现 HTML 报告**：写入 OS 临时目录的自包含 HTML 文件（按 `$TMPDIR` → `/tmp` / `%TEMP%` 解析，文件名 `architecture-review-<timestamp>.html`），打开并告知绝对路径。布局用 CDN 版 Tailwind，图用 CDN 版 Mermaid（关系是图状的才用，编辑式可视化交给手写 div/SVG）。每个候选方案渲染一张卡片：涉及文件、问题、方案、以 locality 和 leverage 表述的收益、手绘前后对比图、推荐强度徽章（Strong / Worth exploring / Speculative），末尾给**首选推荐**。用 `GLOSSARY.md` 的领域词汇加 `/codebase-design` 的建筑词汇（不得漂移成 component / service / API / boundary）。与已有 ADR 冲突的候选，只有在摩擦真实到值得重开 ADR 时才列出，并在卡片上明确标注。报告写完**先不提议接口**，只问"你想深入哪一个"。
   3. **访谈循环**：用户选定后调用 Skill 工具的 `"grilling"` 走决策树（约束、依赖、深化后模块的形状、接缝后放什么、哪些测试存活），同时调用 `"domain-modeling"` 保持领域模型最新（新术语写入 `GLOSSARY.md`、模糊术语当场打磨、用户以站得住的理由否掉候选时提议 ADR）；想探索替代接口就再调 `"codebase-design"` 的设计两遍并行 sub-agent 模式。
 
@@ -217,7 +217,7 @@
 - **一句话定位**：针对高可信一手资料进行调研，并将结果以 Markdown 文件形式保存到仓库中。
 - **调用方式**：模型自动调用
 - **适用场景**：用户需要调研某个主题、收集文档或 API 事实、将阅读性工作委托给后台 agent 时触发；`/wayfinder` 的 research 工单也由它并行烧掉。
-- **核心指令**：启动一个**后台 agent** 执行调研，主 agent 继续工作。后台 agent 的职责：(1) 针对**一手资料**（官方文档、源码、规范、第一方 API）进行调查，而非它们的二手转述，每条结论都要回溯到拥有它的那个源头；(2) 将调研结果写成一份 Markdown 文件，每条结论都附上引用来源；(3) 保存到仓库中已有的笔记目录，遵循现有约定，若无约定则放在合理位置并说明存放路径。
+- **核心指令**：启动一个**后台 agent**（以**全新上下文窗口**启动，不要 fork 当前对话）执行调研，主 agent 继续工作。后台 agent 的职责：(1) 针对**一手资料**（官方文档、源码、规范、第一方 API）进行调查，而非它们的二手转述，每条结论都要回溯到拥有它的那个源头；(2) 将调研结果写成一份 Markdown 文件，每条结论都附上引用来源；(3) 保存到仓库中已有的笔记目录，遵循现有约定，若无约定则放在合理位置并说明存放路径。
 
 ---
 
@@ -247,13 +247,14 @@
 - **调用方式**：用户手动调用
 - **适用场景**：首次使用其他工程技能前运行一次，完成仓库级配置。
 - **核心指令**：这是一个**提示驱动**的技能（非确定性脚本），流程为"探索 → 展示 → 确认 → 写入"。
-  - **步骤 1 探索**：读 `git remote -v` 与 `.git/config`、根目录 `CLAUDE.md` / `AGENTS.md`（是否已有 `## Agent skills` 段）、`GLOSSARY.md` 与 `GLOSSARY-MAP.md`、`docs/adr/` 与 `src/*/docs/adr/`、`docs/agents/`、`.scratch/`；判断 **triage 技能是否已安装**（这决定 Section B 跑不跑）；识别 **monorepo 信号**（`pnpm-workspace.yaml`、`package.json` 的 `workspaces`、有自己 `src/` 的 `packages/*`），这些只出现在真正的大型多包仓库，没有就是单上下文，而单上下文是几乎所有仓库的情况。
+  - **步骤 1 探索**：读 `git remote -v` 与 `.git/config`、根目录 `CLAUDE.md` / `AGENTS.md`（是否已有 `## Agent skills` 段）、`GLOSSARY.md` 与 `GLOSSARY-MAP.md`（以及遗留的 `CONTEXT.md` / `CONTEXT-MAP.md`）、`docs/adr/` 与 `src/*/docs/adr/`、`docs/agents/`、`.scratch/`；判断 **triage 技能是否已安装**（这决定 Section B 跑不跑）；识别 **monorepo 信号**（`pnpm-workspace.yaml`、`package.json` 的 `workspaces`、有自己 `src/` 的 `packages/*`），这些只出现在真正的大型多包仓库，没有就是单上下文，而单上下文是几乎所有仓库的情况。发现遗留的 `CONTEXT.md` / `CONTEXT-MAP.md` 时，主动提出 `git mv` 到对应的 `GLOSSARY` 名字，并改写 `docs/agents/domain.md` 里的旧名。
   - **步骤 2 逐项确认**（每节以推荐答案开头，一个词即可接受）：
-    - **Section A：issue tracker**。默认姿态是这些技能为 GitHub 设计：remote 指向 GitHub 就提议 GitHub，指向 GitLab（`gitlab.com` 或自托管）就提议 GitLab，否则提供 GitHub / GitLab / 本地 markdown（`.scratch/<feature>/`） / 其他（Jira、Linear，用一段自由文本记录）。选择写进 `docs/agents/issue-tracker.md`。GitHub 与 GitLab 模板带一个"PRs as a request surface"开关，**默认关**：保持关闭且不要主动提起，想要外部 PR 进 triage 队列的用户事后自己翻。
+    - **Section A：issue tracker**。默认姿态是这些技能为 GitHub 设计：remote 指向 GitHub 就提议 GitHub，指向 GitLab（`gitlab.com` 或自托管）就提议 GitLab，否则提供 GitHub / GitLab / 本地 markdown（`.scratch/<feature>/`） / 其他（Jira、Linear，用一段自由文本记录）。选择写进 `docs/agents/issue-tracker.md`。GitHub 与 GitLab 模板带一个"PRs as a request surface"开关，**默认关**：保持关闭且不要主动提起，想要外部 PR 进 triage 队列的用户事后自己翻。**GitHub / GitLab tracker 需要可达的仓库**：用户选了其中之一而当前没有指向该 host 的 git remote 时，先拿到仓库 URL 接好（必要时 `git init` + `git remote add origin <url>`），直到在仓库内 `gh repo view` / `glab repo view` 能打印出项目再继续；做不到就停下说明缺什么。
     - **Section B：triage 标签**。triage 技能没安装就**整节跳过**（没装的技能不需要标签）。装了也只问**一个**问题："要保留默认 triage labels 吗？（推荐：是）"。默认是五个规范角色，标签字符串与角色同名：`needs-triage`、`needs-info`、`ready-for-agent`、`ready-for-human`、`wontfix`。选是就原样写下；选否（通常是 tracker 已用别的名字）才收集覆盖映射。**Section B 在 GitHub 或 GitLab 上跑过之后，会创建 tracker 缺失的每个标签**（`gh label create` / `glab label create`）。
     - **Section C：领域文档**。默认**单上下文**（根目录一个 `GLOSSARY.md` + `docs/adr/`），这适合几乎所有仓库，**直接写、不询问**；只有探索发现了 monorepo 信号才提供多上下文（根 `GLOSSARY-MAP.md` 指向各上下文的 `GLOSSARY.md`）并让用户确认。
   - **步骤 3-4：确认并写入**。展示 `## Agent skills` 块草稿和 `docs/agents/` 下各文件内容，让用户先改再写。写入时：`CLAUDE.md` 存在就编辑它，否则 `AGENTS.md` 存在就编辑它，两者都没有才问用户建哪个；已有的 `## Agent skills` 块**就地更新**而非追加重复。`### Triage labels` 子块和 `docs/agents/triage-labels.md` 只在 triage 已安装且 Section B 跑过时才写。本地 markdown tracker 的约定是：spec 叫 `.scratch/<feature-slug>/spec.md`（不是 `PRD.md`），实现工单**一文件一工单** `.scratch/<feature-slug>/issues/<NN>-<slug>.md`（从 `01` 编号，绝不是一个合并的 `tickets.md`）。
   - **步骤 5**：告知用户设置完成、哪些工程技能现在会读这些文件，并说明 `docs/agents/*.md` 事后可直接编辑，只有换 tracker 或推倒重来才需要重跑本技能。
+  - **tracker 模板修正（v1.3.2）**：GitHub 模板改用原生 issue 依赖表达阻塞（`gh issue edit --add-blocked-by`，旧版 `gh` 走 API；并提供统计未关闭阻塞者的命令）、关闭 issue 时先发评论再 `close`（对已关闭 issue 直接 `close --comment` 会丢评论且仍 exit 0）、外部 PR 列表修正 `authorAssociation` 失败、读取 PR 时同时取正文与评论，并明确只向用户自己的仓库建 issue（fork 中 `gh` 可能默认指向上游父仓库，首次建 issue 前先 `gh repo view --json nameWithOwner` 确认）。GitLab 模板用 `glab mr list -O json`、用 `--linked-issues` 关联子 issue、并给出 frontier 查询命令。
 
 ---
 
@@ -322,7 +323,7 @@
   - **工单类型**：Research（AFK，调 Skill 工具的 `"research"` 由 subagent 解决）、Prototype（HITL，调 `"prototype"` 做个便宜粗糙可反应的实物）、Grilling（HITL，对话，默认类型，调 Skill 工具两次 `"grilling"` 与 `"domain-modeling"`）、Task（HITL 或 AFK，决策前必须先做的手工活，它**做**而不**决**，靠解锁决策挣得位置）。答案不写在正文里，落在解决时的记录中。
   - **战争迷雾**：地图刻意不完整。看得见还说不清的问题写进 Not yet specified；判定标准是**现在能否精确说出问题**（不是能否回答）。解决一张工单会清掉它前方的雾，把新变得可表述的东西**一次一张**毕业成工单。
   - **范围之外**：雾只朝目的地聚集，超出目的地的不是雾而是 out of scope，写进独立小节，永不毕业；已存在但被发现越过目的地的工单**直接关闭**并在该节留一行 gist + 原因 + 链接。
-  - **两种调用模式**：**Chart**（用户带一个模糊想法来）命名目的地 → 再次 grill 但**广度优先**地铺前沿（若这一步没翻出任何雾，说明不需要地图，停下问用户想怎么走）→ 建地图 → 把现在能指定的工单建成子 issue，**第二遍**再接阻塞边和交叉引用（issue 需要先有 id，占位的 `#<n>` 会自动链到无关 issue）→ **为每张 research 工单并行派 subagent 调 `"research"`**，把发现落在 throwaway 的 `research/<name>` 分支上并留上下文指针，**推分支但不开 PR**，它永不合并，绘图也不因此停下 → 停下，绘图是一个会话的工作。**Work**（用户带一个地图 URL 或编号来）加载地图的低分辨率视图 → 选工单（用户没指定就取前沿第一张）并**先认领** → 按标签类型解决，按需 zoom → 记录结论：发**解决评论**、关闭 issue、往 Decisions-so-far 追加一条上下文指针 → 新增工单（先建后接）并毕业已可表述的雾。
+  - **两种调用模式**：**Chart**（用户带一个模糊想法来）命名目的地 → 再次 grill 但**广度优先**地铺前沿（若这一步没翻出任何雾，说明不需要地图，停下问用户想怎么走）→ 建地图 → 把现在能指定的工单建成子 issue，**第二遍**再接阻塞边和交叉引用（issue 需要先有 id，占位的 `#<n>` 会自动链到无关 issue）→ **为每张 research 工单并行派 subagent 调 `"research"`**（每个 subagent 以**全新上下文窗口**启动），把发现落在 throwaway 的 `research/<name>` 分支上并留上下文指针，**推分支但不开 PR**，它永不合并，绘图也不因此停下 → 停下，绘图是一个会话的工作。**Work**（用户带一个地图 URL 或编号来）加载地图的低分辨率视图 → 选工单（用户没指定就取前沿第一张）并**先认领** → 按标签类型解决，按需 zoom → 记录结论：发**解决评论**、关闭 issue、往 Decisions-so-far 追加一条上下文指针 → 新增工单（先建后接）并毕业已可表述的雾。
   - **铁律与易错**：**一个会话最多解决一张工单**，research 工单是"一次会话一个工单"的唯一例外。**不要 triage labels、不要占位引用、不要开调研 PR**。地图清晰后交接给 `/to-spec`（把地图的关联决策塌成可建的计划）而非直接 `/implement`；把地图直接接进 `/implement` 会跳过这次塌缩、丢掉关联细节。工单是**决策工单**：它的解答是一个决策，而不是一片待建的实现切片（术语建立后 "ticket" 仍是日常用词）。issue tracker 本应已提供；若没有，**告知用户去运行 `/setup-matt-pocock-skills`**；确实没有 tracker 时默认用本地 markdown tracker。
 
 ---
@@ -368,7 +369,7 @@
   3. **轮格式固定**：`❓ **Q1** - **<问题标题>**: <正文，可含多段与多选>`，空行，`➡️ <推荐答案>`，空行，`---` 分隔，再下一个问题。推荐答案单独占一行 `➡️`，与问题视觉分离，使用户能按编号回答而不必把问题引回去；连续问题之间用水平分隔线，不要连在一起。
   4. **把问题措辞改造成"是"即接受推荐**：让用户能用一个"是"来认可你的推荐答案。
   5. **重算前沿**：每轮回答都会重塑决策树，已定的决策把前沿向外推、解锁依赖它的问题。答案依赖本轮仍未关闭的问题的那个问题属于**更晚的一轮**，不属于这一轮。
-  6. **找事实是你的活，不是用户的**：前沿问题需要环境中的事实（文件系统、工具等）时，派 sub-agent 去查，不要问用户你自己能查到的东西。但**不要阻塞**：正在进行的探索是一个未定的前置条件，只有依赖它的问题等 sub-agent 汇报，前沿其余问题现在就问。**决策权属于用户**：每个决策都要摆给用户并等待。
+  6. **找事实是你的活，不是用户的**：前沿问题需要环境中的事实（文件系统、工具等）时，派 sub-agent（以**全新上下文窗口**启动）去查，不要问用户你自己能查到的东西。但**不要阻塞**：正在进行的探索是一个未定的前置条件，只有依赖它的问题等 sub-agent 汇报，前沿其余问题现在就问。**决策权属于用户**：每个决策都要摆给用户并等待。
   7. **收尾条件**：前沿为空时会话结束，设计树每个分支都走过，没有任何东西被默默假定。在用户确认达成共识之前不要行动。
 
 ---
@@ -556,7 +557,7 @@
 
 ---
 
-## 四、in-progress（开发中草稿，7 个）
+## 四、in-progress（开发中草稿，8 个）
 
 ### `chief-of-staff`
 
@@ -565,12 +566,14 @@
 - **适用场景**：有一个需要长期持续推进的目标（而非一次性任务），希望由一个"直接负责人"持续运营，会话会运行很久，逐步积累部落知识（tribal knowledge），并辅助用户做长期战略决策。
 - **核心指令**：
   1. **双重身份与双轨思考**：你是这个目标的 Directly Responsible Individual（DRI），被授权比平时思考得长远得多，必须同时跑两条轨道，**战术**：怎么完成眼前这个任务？**战略**：怎么改造环境，让*下一个*任务的结果更好？
-  2. **全部工作放进 subagent**：所有实际工作都应由 subagent 完成，以保护你自己的上下文窗口；使用**后台 agent**，这样你才能与用户保持持续对话。
-  3. **稀疏通信 + context pointer**：与 subagent 的往来通信要稀疏，主要靠**上下文指针**传递：研究笔记、此前的 commit 等，指针已能提供的信息不要重复传递。
-  4. **日程（Schedules）**：在 harness 允许的前提下，主动建议能推进该目标的**周期性日程**。
-  5. **战略视角优先**：作为任何一切工作的**第一步**，先考虑 agent 所处的环境能否被改善。agent 在**成功之坑（pit of success）**里才茁壮：极度受限的 API 与函数、强制正确性的 lint 规则、能让代码评审执行最佳实践的 `CODING_STANDARDS.md`。它们还需要相关的**数据源**才能成事：关键运行进程（如 dev server，或生产环境）的日志、测试环境数据库的访问权、必要时的浏览器访问权（点击浏览、截图）。
-  6. **"no workarounds" 规则**：打造遵守该规则的环境（与代码库）：不允许一次性变通方案或绕过既定流程的 hack；任何对约定的偏离都必须在功能开发之前被主动修掉。
-  7. **Relentless 改进环境**：把每一条用户消息都当作一次寻找上述改进机会的借口。
+  2. **全部工作放进 subagent**：所有实际工作都应由 subagent 完成，以保护你自己的上下文窗口；使用**后台 agent**，这样你才能与用户保持持续对话。**每个 subagent 都用全新的上下文窗口启动**，不要 fork 当前对话（某些 harness 默认 fork，会把 subagent 本应拥有的干净上下文丢掉）。
+  3. **稀疏通信 + context pointer**：与 subagent 的往来通信要稀疏，主要靠**上下文指针**传递：研究笔记、此前的 commit、wiki 页面等，指针已能提供的信息不要重复传递。
+  4. **Wiki 记忆**：把记忆放在一个由互相链接的 markdown 页面组成的 **wiki** 里，让跨会话的知识得以延续（只存在上下文里的部落知识会随压缩丢失）。优先复用用户或其他 agent 已有的**共享 wiki**，按其约定写入；没有共享 wiki 时，先与用户商定位置再写第一页。`index.md` 按分类列出所有页面及一句话摘要，其余页面一事一页（决策、反复出现的问题、子系统、用户偏好）并互相链接；来源（issue、PR、会话记录、subagent 报告）只引用、绝不复制或编辑。三个操作维持 wiki：**Ingest**（学到持久知识时更新它触及的每一页和索引）、**Query**（做决策前先读 `index.md` 及其指向的页面，值得保留的答案落成新页）、**Lint**（定期检查矛盾、孤页、缺链和已被新来源推翻的说法，可作为日程建议）。wiki 记录的是**历史而非现状**：每条断言都带日期；涉及代码的断言要引用其成立时的 commit（含仓库）；变化时新增带日期的断言并把旧的标记为已被取代，而不是改写旧的。
+  5. **Procedures（调用相邻技能）**：有些流程住在相邻技能里，按相对路径读它的 `SKILL.md` 并照做。**Retro**（`../retro/SKILL.md`）：约每五个 subagent 会话跑一次复盘（包括 `implement-spec` 派发的会话），优先挑出过问题的那些；用"自行决定哪些候选值得跟进并亲自推进"替代 retro 的最后一步。**大块工作**：用 `../to-spec/SKILL.md` 写 spec，用 `../to-tickets/SKILL.md` 拆工单，二者发布到 tracker 后，用 `../implement-spec/SKILL.md` 实施。
+  6. **日程（Schedules）**：在 harness 允许的前提下，主动建议能推进该目标的**周期性日程**。
+  7. **战略视角优先**：作为任何一切工作的**第一步**，先考虑 agent 所处的环境能否被改善。agent 在**成功之坑（pit of success）**里才茁壮：极度受限的 API 与函数、强制正确性的 lint 规则、能让代码评审执行最佳实践的 `CODING_STANDARDS.md`。它们还需要相关的**数据源**才能成事：关键运行进程（如 dev server，或生产环境）的日志、测试环境数据库的访问权、必要时的浏览器访问权（点击浏览、截图）。
+  8. **"no workarounds" 规则**：打造遵守该规则的环境（与代码库）：不允许一次性变通方案或绕过既定流程的 hack；任何对约定的偏离都必须在功能开发之前被主动修掉。
+  9. **Relentless 改进环境**：把每一条用户消息都当作一次寻找上述改进机会的借口。
 
 ---
 
@@ -645,6 +648,22 @@
 
 ---
 
+### `software-factory`
+
+- **一句话定位**：为"软件工厂"的设计提供共享词汇：工厂要执行的任务，以及它接入的各项服务。
+- **调用方式**：用户手动调用
+- **适用场景**：想设计一套由 agent 把工单、PR 和日程转化为已合并代码、并运行在用户选择的远程基础设施上的系统（软件工厂）时；通常与 `/grilling` 会话配合使用，用它统一术语、补齐设计决策。
+- **核心指令**：
+  1. **先统一词汇，且只用这些词**：**Task**（工厂执行的一类工作，定义一次、运行多次：review、explore、implement、ratchet；避免 job / workflow / action）、**Trigger**（启动一次 run 的事件：工单或 git host 的变更、编排器的时钟、或另一次 run）、**Run**（一次任务在一次 runner 上的完整执行，视为黑盒，永不等待人类；避免 session）、**Runner**（一次性执行机器，跑完不留痕迹，唯一记忆是工单系统、git host 和编排器；避免 server / host / box / sandbox）、**Ticket tracker**（工单所在地，也是工厂的人类界面：人建工单调度工作、在评论里与 agent 对话）、**Ticket source**（工厂外部创建工单的东西：反馈按钮、监控、错误追踪、收件箱）、**Git host**、**Orchestrator**（接收 trigger、在 runner 上启动 run、记录排队/在飞/完成状态）、**Observability platform**（run 的日志、追踪与状态，可选）。用户用了 _Avoid_ 里的词，就当场纠正为规范术语。
+  2. **从用户的问题出发，而不是从工厂出发**：未分诊的工单、等待自动评审的 PR、要迁移到的更严格自动检查、没人读的 bug。用户说不出要建什么时，先读 `EXAMPLE-TASKS.md`，按问题挑选任务。
+  3. **起步要慢（三道刹车）**：每个 trigger 都是油门，只有油门没有刹车就会变成"slop cannon"。三道刹车是**自动检查**（类型、lint、测试等确定性门禁）、**自动评审**（独立 run 冷读 diff）、**人工评审**（合并前由人读 PR）。一次只加一个自动 trigger 并先限流（十份 bug 报告取一份、时钟每天一次），每个 PR 都保留人工评审；信任建立后再放开，每个 run 循环最多重试几次就交回人类。
+  4. **填满每个槽位**：服务即槽位，一个产品可占多个槽位，一台服务器可托管多个服务。技能给出三种并排参考设计（全部 GitHub / Linear 工单 / 自有 tracker），选型时先读对应调查文档（`TICKET-TRACKERS.md`、`GIT-HOSTS.md`、`RUNNERS.md`、`OBSERVABILITY-PLATFORMS.md`）建立方向感，再自行调研当前选项。原则是**买服务、建任务**：任务承载用户的设计，服务是通用的；优先使用现成的工单系统。
+  5. **逐项拷问每个任务**：①什么触发它？②它做什么、读写哪些服务？③它接下来触发什么？④人在哪里重新介入？⑤什么阻止两个 run 做同一件事？每个 ticket source 还要回答：什么阻止它重复建同一张工单？
+  6. **完成标准**：每个槽位都指定了产品（可观测平台允许明确选"无"），每个任务和 ticket source 都回答了全部问题，设计才算完成。
+- **配套参考文件**：`EXAMPLE-TASKS.md`（按问题分组的示例任务与 trigger 链）、`TICKET-TRACKERS.md` / `GIT-HOSTS.md` / `RUNNERS.md` / `OBSERVABILITY-PLATFORMS.md`（每个槽位的产品类型调查与选型问题）。
+
+---
+
 ## 五、快速汇总表
 
 ### engineering（工程类，20 个）
@@ -693,17 +712,18 @@
 | `scaffold-exercises` | 自动 | 生成符合 lint 规范的课程练习目录结构 |
 | `setup-pre-commit` | 自动 | 配置 Husky + lint-staged + typecheck + test 提交门禁 |
 
-### in-progress（开发中草稿，7 个）
+### in-progress（开发中草稿，8 个）
 
 | Skill | 调用方式 | 一句话作用 |
 |---|---|---|
-| `chief-of-staff` | 手动 | 实验性：单会话内协调 subagent 推进长期目标 |
+| `chief-of-staff` | 手动 | 实验性：单会话内协调 subagent 推进长期目标，记忆落在 wiki |
 | `claude-handoff` | 手动 | 生成交接摘要并用 `claude --bg` 启动后台接手 agent |
 | `loop-me` | 手动 | 把重复模式访谈成可实施的工作流规格 |
 | `setup-ts-deep-modules` | 手动 | 用 dependency-cruiser 把 TS 包封装为深模块边界 |
 | `writing-beats` | 手动 | 以"接地"约束逐拍组装文章叙事路径 |
 | `writing-fragments` | 手动 | 写作探索期：访谈挖掘原始片段，不施加结构 |
 | `writing-shape` | 手动 | 把素材逐段塑造成有论证结构的完整文章 |
+| `software-factory` | 手动 | 软件工厂设计词汇：任务、run、runner 与各项服务 |
 
 ### 已移除的技能（不再收录）
 
@@ -730,6 +750,7 @@
 | v1.2.3 | 2026-08-06 | `diagnosing-bugs` 脱敏章节、三个技能去 Claude Code 专属工具名、`wizard` 进度改按阶段计 |
 | v1.3.0 | 2026-09-29 | 新增 `implement-spec`/`pr`/`retro`，删除 `resolving-merge-conflicts`，**`CONTEXT.md`→`GLOSSARY.md` 全局更名（11 个技能）**，跨技能调用统一 Skill tool 写法，全仓库清除 em-dash |
 | v1.3.1 | 2026-10-04 | `ask-matt` 把 bug 后反思路由改指 `/retro`（仅此一条） |
-| HEAD `49dd158` | 2026-10-09 | 未发版：11 处技能级修正 + 实验技能 `chief-of-staff` + README 改自助更新安装 |
+| v1.3.2 | 2026-10-29 | **subagent 全新上下文窗口约定（8 个技能）**、`chief-of-staff` wiki 记忆、GitHub/GitLab tracker 模板修正、`handoff` 明确临时目录、`implement` 改用 Skill tool 调用 `tdd`/`code-review` |
+| HEAD `abeeaf9` | 2026-11-19 | 未发版：新增 `software-factory`；`chief-of-staff` 共享 wiki + procedures；`implement-spec` 每工单全新 implementer |
 
 > 完整逐版本差异（含每条 PR、每个技能的具体改动、对使用者的实际影响）见 [上游版本差异](./上游版本差异.md)。

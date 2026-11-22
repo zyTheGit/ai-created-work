@@ -170,7 +170,8 @@ export default withMermaid(
                   { text: 'setup-ts-deep-modules', link: 'setup-ts-deep-modules' },
                   { text: 'writing-beats', link: 'writing-beats' },
                   { text: 'writing-fragments', link: 'writing-fragments' },
-                  { text: 'writing-shape', link: 'writing-shape' }
+                  { text: 'writing-shape', link: 'writing-shape' },
+                  { text: 'software-factory', link: 'software-factory' }
                 ]
               }
             ]

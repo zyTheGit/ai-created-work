@@ -11,7 +11,7 @@
 | 🤖 **AI 与编程** | Claude Code 生态、系统提示词研究、EvoKit 项目文档 | [Claude Code 生态推荐](/ai/Claude-Code-生态推荐) |
 | 🛠️ **开发工具与配置** | 9Router、scrcpy、IDM、Git 双仓库同步与分支管理 | [9Router 安装指南](/tools/9router-install-guide) |
 | 📋 **个人未来计划** | AI 时代前端工程师的生存与进阶完整规划 | [总纲](/个人未来计划/00-总纲) |
-| 🧩 **Matt Pocock Skills** | 41 个 Claude Code 工程技能的中文文档 | [索引](/mattpocock-skills/README) |
+| 🧩 **Matt Pocock Skills** | 39 个 Claude Code 工程技能的中文文档 | [索引](/mattpocock-skills/README) |
 
 ## 本地开发
 
